@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tools by NTMedia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --bg:#050b1a;
+    --panel:#0b1530;
+    --line:#1b2d5c;
+    --blue:#2f7bff;
+    --cyan:#22d3ee;
+    --gold:#fbbf24;
+    --red:#ff3b5c;
+    --green:#16c76e;
+    --text:#e8f0ff;
+    --muted:#8ea3cf;
+    --font:"Space Grotesk","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--font);
+    color:var(--text);
+    background:
+      radial-gradient(900px 500px at 85% -10%,rgba(47,123,255,.28),transparent 60%),
+      radial-gradient(700px 400px at -10% 110%,rgba(34,211,238,.18),transparent 60%),
+      var(--bg);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;
+    background-image:
+      linear-gradient(rgba(47,123,255,.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(47,123,255,.07) 1px,transparent 1px);
+    background-size:44px 44px;
+    mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%);
+    -webkit-mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%);
+  }
+  .screen{display:none;position:relative;min-height:100vh;width:100%}
+  .screen.active{display:flex}
+
+  #home,#method,#auth,#done{align-items:center;justify-content:center;padding:24px}
+  .card{
+    width:100%;max-width:460px;position:relative;z-index:2;
+    background:linear-gradient(180deg,rgba(15,28,64,.94),rgba(8,17,40,.94));
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:32px 28px;
+    box-shadow:0 0 0 1px rgba(47,123,255,.08),0 30px 80px rgba(0,0,0,.55),0 0 60px rgba(47,123,255,.12);
+  }
+  .card::before{
+    content:"";position:absolute;left:28px;right:28px;top:-1px;height:2px;
+    background:linear-gradient(90deg,transparent,var(--cyan),var(--blue),transparent);
+  }
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .logo{
+    width:40px;height:40px;border-radius:10px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--blue),var(--cyan));
+    box-shadow:0 0 22px rgba(47,123,255,.55);
+  }
+  .logo svg{width:22px;height:22px}
+  h1{font-size:24px;font-weight:700;letter-spacing:.2px}
+  h1 span{color:var(--cyan)}
+  .sub{color:var(--muted);font-size:14px;margin:6px 0 22px}
+  .choose-prompt{
+    font-size:15px;font-weight:700;color:var(--text);
+    text-align:center;margin-bottom:18px;
+  }
+
+  .app-menu{display:flex;flex-direction:column;gap:12px}
+  .tool-btn{
+    width:100%;padding:16px 18px;border-radius:14px;cursor:pointer;
+    border:1px solid var(--line);
+    background:linear-gradient(135deg,rgba(19,37,84,.9),rgba(9,20,48,.95));
+    color:var(--text);font:inherit;text-align:left;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    transition:transform .15s,border-color .2s,box-shadow .2s;
+  }
+  .tool-btn:hover{
+    border-color:var(--cyan);
+    box-shadow:0 10px 28px rgba(47,123,255,.25);
+    transform:translateY(-1px);
+  }
+  .tool-btn.primary{
+    border-color:rgba(251,191,36,.55);
+    background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(47,123,255,.22));
+  }
+  .tool-title-row{display:inline-flex;align-items:center;gap:8px}
+  .vip-crown{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:2px 7px;border-radius:99px;
+    font-size:10px;font-weight:700;letter-spacing:.4px;
+    color:#1c1400;
+    background:linear-gradient(135deg,#fde68a,#f59e0b);
+    box-shadow:0 0 12px rgba(251,191,36,.45);
+  }
+  .vip-crown svg{width:12px;height:12px;fill:#1c1400}
+  .tool-title{font-size:16px;font-weight:700;display:block}
+  .tool-desc{font-size:12px;color:var(--muted);display:block;margin-top:3px}
+  .tool-arrow{color:var(--cyan);font-size:18px;font-weight:700}
+
+  .method-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .method-btn{
+    padding:15px 14px;border-radius:12px;cursor:pointer;
+    border:1px solid var(--line);
+    background:#060e24;color:var(--text);font:inherit;font-weight:700;font-size:14px;
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    transition:border-color .2s,background .2s,transform .15s;
+  }
+  .method-btn:hover,.method-btn.active{
+    border-color:var(--cyan);
+    background:rgba(47,123,255,.2);
+    transform:translateY(-1px);
+  }
+  .method-btn svg{width:18px;height:18px;flex-shrink:0;color:var(--cyan)}
+
+  label{display:block;font-size:13px;color:var(--muted);margin:16px 0 7px}
+  .note-below{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.4}
+  input{
+    width:100%;padding:13px 14px;border-radius:10px;
+    background:#060e24;border:1px solid var(--line);color:var(--text);
+    font:inherit;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;
+  }
+  input::placeholder{color:#4a5d8a}
+  input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,123,255,.25)}
+  .btn{
+    width:100%;margin-top:20px;padding:14px;border:0;border-radius:10px;cursor:pointer;
+    font:inherit;font-size:15px;font-weight:700;color:#fff;
+    background:linear-gradient(90deg,var(--blue),#1f5fe0);
+    box-shadow:0 8px 26px rgba(47,123,255,.4);
+    transition:transform .15s,box-shadow .2s,filter .2s;
+  }
+  .btn:hover{filter:brightness(1.1);box-shadow:0 10px 34px rgba(47,123,255,.55)}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+  .btn.ghost{
+    background:transparent;border:1px solid var(--line);box-shadow:none;color:var(--muted);margin-top:10px;
+  }
+  .btn.ghost:hover{color:var(--text);border-color:var(--blue)}
+  .err{color:#ff7a8a;font-size:13px;margin-top:12px;min-height:18px}
+
+  #qrBox{display:none;text-align:center}
+  #qrBox.show{display:block;animation:pop .35s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+  .qr-frame{
+    display:inline-block;padding:14px;background:#fff;border-radius:14px;margin:6px 0 14px;
+    box-shadow:0 0 0 2px var(--blue),0 0 40px rgba(47,123,255,.5);
+  }
+  .qr-frame img,.qr-frame canvas{display:block}
+  .qr-hint{color:var(--muted);font-size:13px;margin-bottom:4px}
+
+  #signalScreen,#progress{
+    background:#e9e9f3;color:#1f1f2b;
+    flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    padding:72px 18px;overflow:hidden;
+  }
+  #signalScreen::before,#progress::before{display:none}
+
+  .ticker-wrap{
+    position:absolute;left:0;right:0;overflow:hidden;white-space:nowrap;
+    pointer-events:none;user-select:none;z-index:1;
+  }
+  .ticker-wrap.top{top:14px}
+  .ticker-wrap.bottom{bottom:14px}
+  .ticker-track{
+    display:inline-flex;align-items:center;gap:10px;
+    animation:marqueeSlow 34s linear infinite;
+  }
+  .ticker-wrap.bottom .ticker-track{
+    animation:marqueeSlowReverse 38s linear infinite;
+  }
+  .badge-box{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:5px 10px;border-radius:4px;
+    font-size:11px;font-weight:700;letter-spacing:.7px;
+    color:#fff;
+  }
+  .b-blue{background:#1a73ff}
+  .b-red{background:#d91e36}
+  .b-black{background:#14141f}
+
+  @keyframes marqueeSlow{
+    0%{transform:translateX(0%)}
+    100%{transform:translateX(-50%)}
+  }
+  @keyframes marqueeSlowReverse{
+    0%{transform:translateX(-50%)}
+    100%{transform:translateX(0%)}
+  }
+
+  .center-rect{
+    position:relative;z-index:2;
+    width:min(440px,92vw);
+    background:#ffffff;
+    border:2px solid rgba(20,20,31,.16);
+    border-radius:10px;
+    padding:30px 24px;
+    box-shadow:0 20px 50px rgba(20,20,31,.12);
+    display:flex;flex-direction:column;align-items:center;
+  }
+  .live-ops{
+    width:100%;
+    background:#14141f;
+    color:#38bdf8;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:11px;
+    text-align:left;
+    padding:10px 12px;
+    border-radius:6px;
+    margin-bottom:20px;
+    line-height:1.45;
+    max-height:76px;
+    overflow:hidden;
+  }
+  .live-ops .op-red{color:#ff5c77}
+  .live-ops .op-yellow{color:#facc15}
+  .live-ops .op-green{color:#34d399}
+
+  .state-icon-wrap{
+    width:64px;height:64px;position:relative;
+    display:grid;place-items:center;margin-bottom:18px;
+  }
+  .red-spinner{
+    width:56px;height:56px;border-radius:50%;
+    border:4px solid rgba(217,30,54,.18);
+    border-top-color:#d91e36;
+    border-right-color:#d91e36;
+    animation:spin .85s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .green-tick-circle{
+    display:none;
+    width:60px;height:60px;border-radius:50%;
+    background:var(--green);
+    color:#fff;
+    align-items:center;justify-content:center;
+    box-shadow:0 8px 24px rgba(22,199,110,.35);
+    animation:pop .25s ease;
+  }
+  .green-tick-circle.show{display:flex}
+  .green-tick-circle svg{width:32px;height:32px}
+
+  .signal-highlight{
+    font-size:16px;font-weight:700;line-height:1.45;
+    color:#d61f3c;min-height:46px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .signal-highlight.sent{color:#0f8a4b;font-size:15px}
+
+  .bar{
+    width:min(320px,80vw);height:9px;border-radius:99px;margin-top:22px;overflow:hidden;
+    background:rgba(26,115,255,.12);border:1px solid rgba(47,123,255,.35);
+  }
+  .bar>i{display:block;height:100%;width:0;border-radius:99px;background:#1a73ff}
+  .bar.run>i{animation:fill25 25s linear forwards}
+  @keyframes fill25{from{width:0}to{width:100%}}
+  .l-title{font-size:17px;font-weight:700;color:#14141f;line-height:1.35}
+  .l-sub{font-size:13px;color:#6b6b80;margin-top:10px}
+  .status-red{font-size:14px;font-weight:700;color:#d61f3c;margin-top:14px;min-height:20px}
+
+  .done-card{text-align:center}
+  .success-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:6px 14px;border-radius:99px;font-size:12px;font-weight:700;
+    background:rgba(34,211,238,.14);color:var(--cyan);border:1px solid rgba(34,211,238,.35);
+    margin-bottom:14px;
+  }
+  .done-title{font-size:21px;font-weight:700;color:#fff;line-height:1.35;margin-bottom:18px}
+  .done-img-wrap{
+    border-radius:14px;overflow:hidden;border:1px solid var(--line);
+    background:#ffffff;margin-bottom:14px;
+  }
+  .done-img-wrap img{display:block;width:100%;height:auto}
+  .done-receipt{
+    text-align:left;
+    background:#060e24;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 14px;
+    margin-bottom:14px;
+    font-size:13px;
+    line-height:1.5;
+    color:var(--text);
+    word-break:break-word;
+  }
+  .done-receipt b{color:var(--cyan);font-weight:700}
+
+  #scanned{align-items:center;justify-content:center;padding:24px}
+  .id-card{
+    width:100%;max-width:420px;text-align:center;
+    background:linear-gradient(180deg,rgba(15,28,64,.92),rgba(8,17,40,.92));
+    border:1px solid var(--line);border-radius:20px;padding:30px 24px;
+    box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 60px rgba(47,123,255,.15);
+    position:relative;
+  }
+  .id-card::before{
+    content:"";position:absolute;left:24px;right:24px;top:-1px;height:2px;
+    background:linear-gradient(90deg,transparent,var(--cyan),var(--blue),transparent);
+  }
+  .avatar{
+    width:76px;height:76px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--blue),var(--cyan));
+    box-shadow:0 0 30px rgba(47,123,255,.55);
+  }
+  .avatar svg{width:38px;height:38px}
+  .id-card h2{font-size:20px;margin-bottom:4px}
+  .id-card .tag{color:var(--muted);font-size:13px;margin-bottom:22px}
+  .field{
+    text-align:left;background:#060e24;border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;margin-top:12px;
+  }
+  .field small{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
+  .field b{display:block;font-weight:500;font-size:15px;word-break:break-all;color:var(--text)}
+  .field b.mono{color:var(--cyan);letter-spacing:.5px}
+  .foot{margin-top:22px;color:#4f6291;font-size:12px}
+
+  @media (prefers-reduced-motion:reduce){
+    .red-spinner,.ticker-track{animation-duration:25s}
+    #qrBox.show{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<main id="home" class="screen active">
+  <section class="card">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg>
+      </div>
+      <h1>Tools by <span>NTMedia</span></h1>
+    </div>
+    <p class="sub">Chọn chức năng để bắt đầu.</p>
+
+    <div id="menuBox" class="app-menu">
+      <button type="button" class="tool-btn primary" id="btnAgeLimit">
+        <span>
+          <span class="tool-title-row">
+            <span class="tool-title">Giới Hạn Độ Tuổi</span>
+            <span class="vip-crown">
+              <svg viewBox="0 0 24 24"><path d="M3 18h18v2H3v-2zm0-11 5 5 4-7 4 7 5-5-2 9H5L3 7z"/></svg>
+              <span>VIP</span>
+            </span>
+          </span>
+          <span class="tool-desc">Tạo mã QR &amp; kiểm tra xác minh độ tuổi</span>
+        </span>
+        <span class="tool-arrow">→</span>
+      </button>
+
+      <button type="button" class="tool-btn" id="btnBizVerify">
+        <span>
+          <span class="tool-title">Xác Minh Doanh Nghiệp</span>
+          <span class="tool-desc">Mô-đun hỗ trợ xác minh doanh nghiệp</span>
+        </span>
+        <span class="tool-arrow">→</span>
+      </button>
+
+      <button type="button" class="tool-btn" id="btnLocketGold">
+        <span>
+          <span class="tool-title">Nâng Cấp Locket Gold 1</span>
+          <span class="tool-desc">Mô-đun hỗ trợ nâng cấp Locket Gold 1</span>
+        </span>
+        <span class="tool-arrow">→</span>
+      </button>
+
+      <div class="err" id="menuMsg"></div>
+    </div>
+
+    <div id="activationBox" style="display:none">
+      <label for="activationCode">Mã kích hoạt (8 số)</label>
+      <input id="activationCode" type="password" inputmode="numeric" maxlength="8" placeholder="Nhập mã kích hoạt 8 số" autocomplete="off">
+      <div class="note-below">Nhập mã kích hoạt do nhà sản xuất cung cấp</div>
+
+      <div class="err" id="actErr"></div>
+      <button type="button" class="btn" id="submitActivationBtn">Kích hoạt</button>
+      <button type="button" class="btn ghost" id="backFromActBtn">Quay lại danh sách</button>
+    </div>
+
+    <div id="formBox" style="display:none">
+      <label for="link">Link profile</label>
+      <input id="link" type="url" placeholder="https://www.tiktok.com/@ten.ban" autocomplete="off">
+
+      <label for="uid">ID TikTok / UID</label>
+      <input id="uid" type="text" placeholder="Nhập ID TikTok hoặc UID" autocomplete="off">
+
+      <div class="err" id="err"></div>
+      <button type="button" class="btn" id="gen">Tạo mã QR</button>
+      <button type="button" class="btn ghost" id="backToMenu">Quay lại danh sách</button>
+    </div>
+
+    <div id="qrBox">
+      <div class="qr-frame"><div id="qrcode"></div></div>
+      <p class="qr-hint">Quét mã QR bằng điện thoại của bạn.</p>
+      <button type="button" class="btn" id="scanned-btn">Đã tiến hành quét QR</button>
+      <button type="button" class="btn ghost" id="back">Nhập lại thông tin</button>
+    </div>
+  </section>
+</main>
+
+<section id="method" class="screen">
+  <div class="card">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h1>Bảo mật <span>NTMedia</span></h1>
+    </div>
+
+    <p class="choose-prompt">Vui lòng chọn 1 trong 2 phương thức bảo mật</p>
+
+    <div class="method-grid">
+      <button type="button" class="method-btn" id="pickEmail">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <span>Email</span>
+      </button>
+
+      <button type="button" class="method-btn" id="pickPhone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.81.37 1.6.73 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.36 1.53.61 2.34.73A2 2 0 0 1 22 16.92z"/></svg>
+        <span>Số điện thoại</span>
+      </button>
+    </div>
+
+    <div id="contactInputArea" style="display:none">
+      <label id="contactLabel" for="contactValue">Email</label>
+      <input id="contactValue" type="email" placeholder="Nhập địa chỉ email" autocomplete="off">
+      <div class="err" id="contactErr"></div>
+      <button type="button" class="btn" id="sendContactBtn">Gửi</button>
+    </div>
+
+    <button type="button" class="btn ghost" id="cancelMethodBtn">Quay lại</button>
+  </div>
+</section>
+
+<section id="signalScreen" class="screen">
+  <div class="ticker-wrap top" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="badge-box b-blue">NTMEDIA CORE</span>
+      <span class="badge-box b-red">PROVIDER LINK</span>
+      <span class="badge-box b-black">NODE 01</span>
+      <span class="badge-box b-blue">AUTH GATEWAY</span>
+      <span class="badge-box b-red">SIGNAL STREAM</span>
+      <span class="badge-box b-black">UID SYNC</span>
+      <span class="badge-box b-blue">NTMEDIA CORE</span>
+      <span class="badge-box b-red">PROVIDER LINK</span>
+      <span class="badge-box b-black">NODE 01</span>
+      <span class="badge-box b-blue">AUTH GATEWAY</span>
+      <span class="badge-box b-red">SIGNAL STREAM</span>
+      <span class="badge-box b-black">UID SYNC</span>
+    </div>
+  </div>
+
+  <div class="center-rect">
+    <div class="live-ops" id="signalOps" aria-live="polite"></div>
+
+    <div class="state-icon-wrap">
+      <div class="red-spinner" id="redSpinner" aria-hidden="true"></div>
+      <div class="green-tick-circle" id="greenTick" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+    </div>
+
+    <div class="signal-highlight" id="signalText">Đang gửi tín hiệu kết nối đến nhà cung cấp</div>
+
+    <button type="button" class="btn" id="toAuthBtn" style="display:none">Tiếp tục</button>
+  </div>
+
+  <div class="ticker-wrap bottom" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="badge-box b-black">SECURE SOCKET</span>
+      <span class="badge-box b-blue">OTP DISPATCH</span>
+      <span class="badge-box b-red">VERIFYING</span>
+      <span class="badge-box b-black">NTMEDIA TOOLS</span>
+      <span class="badge-box b-blue">CHANNEL OK</span>
+      <span class="badge-box b-red">LIVE OPS</span>
+      <span class="badge-box b-black">SECURE SOCKET</span>
+      <span class="badge-box b-blue">OTP DISPATCH</span>
+      <span class="badge-box b-red">VERIFYING</span>
+      <span class="badge-box b-black">NTMEDIA TOOLS</span>
+      <span class="badge-box b-blue">CHANNEL OK</span>
+      <span class="badge-box b-red">LIVE OPS</span>
+    </div>
+  </div>
+</section>
+
+<section id="auth" class="screen">
+  <div class="card">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h1>Xác thực <span>bảo mật</span></h1>
+    </div>
+    <p class="sub">Nhập mã bảo mật 6 số để tiếp tục.</p>
+
+    <label for="secCode">Mã bảo mật (6 số)</label>
+    <input id="secCode" type="password" inputmode="numeric" maxlength="6" placeholder="Nhập mã bảo mật 6 số" autocomplete="off">
+
+    <div class="err" id="authErr"></div>
+    <button type="button" class="btn" id="verifyCodeBtn">Xác nhận mã</button>
+    <button type="button" class="btn ghost" id="cancelAuthBtn">Quay lại</button>
+  </div>
+</section>
+
+<section id="progress" class="screen">
+  <div class="ticker-wrap top" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="badge-box b-red">NTMEDIA LIVE</span>
+      <span class="badge-box b-blue">AGE CHECK</span>
+      <span class="badge-box b-black">RUNNER 25S</span>
+      <span class="badge-box b-red">SECURITY</span>
+      <span class="badge-box b-blue">UID VALID</span>
+      <span class="badge-box b-black">SYNCING</span>
+      <span class="badge-box b-red">NTMEDIA LIVE</span>
+      <span class="badge-box b-blue">AGE CHECK</span>
+      <span class="badge-box b-black">RUNNER 25S</span>
+      <span class="badge-box b-red">SECURITY</span>
+      <span class="badge-box b-blue">UID VALID</span>
+      <span class="badge-box b-black">SYNCING</span>
+    </div>
+  </div>
+
+  <div class="center-rect">
+    <div class="live-ops" id="progressOps" aria-live="polite"></div>
+    <div class="l-title">Đang làm việc với đội ngũ hỗ trợ</div>
+    <div class="bar" id="bar" role="progressbar" aria-label="Tiến trình"><i></i></div>
+    <div class="status-red" id="phaseText">Đang chuẩn bị tài nguyên</div>
+    <div class="l-sub">Quá trình xử lý: 25 giây</div>
+  </div>
+
+  <div class="ticker-wrap bottom" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="badge-box b-blue">NODE ACTIVE</span>
+      <span class="badge-box b-black">BUFFER OK</span>
+      <span class="badge-box b-red">PROCESSING</span>
+      <span class="badge-box b-blue">NTMEDIA</span>
+      <span class="badge-box b-black">VERIFIED</span>
+      <span class="badge-box b-red">COMPLETING</span>
+      <span class="badge-box b-blue">NODE ACTIVE</span>
+      <span class="badge-box b-black">BUFFER OK</span>
+      <span class="badge-box b-red">PROCESSING</span>
+      <span class="badge-box b-blue">NTMEDIA</span>
+      <span class="badge-box b-black">VERIFIED</span>
+      <span class="badge-box b-red">COMPLETING</span>
+    </div>
+  </div>
+</section>
+
+<!-- MÀN HÌNH HOÀN THÀNH — SỬA src="https://i.ibb.co/dJH38QbS/Screenshot-2026-11-24-172207.png" THÀNH ẢNH CỦA BẠN -->
+<section id="done" class="screen">
+  <div class="card done-card">
+    <div class="success-badge">✓ HOÀN TẤT XÁC MINH</div>
+    <div class="done-title">Xác Nhận Độ Tuổi Thành Công</div>
+
+    <div class="done-img-wrap">
+      <img src="https://i.ibb.co/dJH38QbS/Screenshot-2026-11-24-172207.png" alt="Đã xác nhận tuổi">
+    </div>
+
+    <div class="done-receipt" id="doneReceipt">
+      Đội ngũ hỗ trợ đã tiếp nhận và xử lý thành công mã đơn 
+      <b id="orderCodeText">1826911368973</b> 
+      của người dùng : "<b id="tiktokIdText">—</b>"
+    </div>
+
+    <button type="button" class="btn" id="again">Quay lại trang chính</button>
+  </div>
+</section>
+
+<main id="scanned" class="screen">
+  <section class="id-card">
+    <div class="avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+    </div>
+    <h2>Thông tin tài khoản</h2>
+    <div class="tag">Tools by NTMedia</div>
+
+    <div class="field"><small>UID / ID TikTok</small><b class="mono" id="sUid">—</b></div>
+    <div class="field"><small>Link profile</small><b id="sLink">—</b></div>
+
+    <button type="button" class="btn" id="openLink">Mở profile</button>
+    <div class="foot">© NTMedia</div>
+  </section>
+</main>
+
+<script>
+(function(){
+  var ACTIVATION_CODE = '14102010';
+  var SECURITY_CODE = '141020';
+  var BASE_ORDER_DIGITS = '1826911368973';
+
+  var $ = function(id){ return document.getElementById(id); };
+  var screens = ['home','method','signalScreen','auth','progress','done','scanned'];
+  var timers = [];
+  var intervals = [];
+  var selectedMethod = null;
+  var progressLogCls = 'op-red';
+
+  var opMessages = [
+    'dispatch.signal(provider_node_01)',
+    'handshake.init(tls_channel)',
+    'verify.contact_route(payload)',
+    'check.rate_limit(status=ok)',
+    'sync.session_token(uid)',
+    'audit.security_layer(active)'
+  ];
+  var opIdx = 0;
+
+  function logAction(msg, level){
+    var lvl = level || 'info';
+    var stamp = new Date().toLocaleTimeString('vi-VN', {hour12:false});
+    console.log('[NTMedia][' + stamp + '][' + lvl.toUpperCase() + '] ' + msg);
+  }
+
+  // Tráo vị trí ngẫu nhiên các chữ số của mã đơn gốc 1826911368973
+  function shuffleOrderCode(sourceStr){
+    var chars = sourceStr.split('');
+    for(var i = chars.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = chars[i];
+      chars[i] = chars[j];
+      chars[j] = tmp;
+    }
+    var shuffled = chars.join('');
+    if(shuffled === sourceStr && chars.length > 1){
+      var swap = chars[0];
+      chars[0] = chars[chars.length - 1];
+      chars[chars.length - 1] = swap;
+      shuffled = chars.join('');
+    }
+    return shuffled;
+  }
+
+  function resolveTikTokId(){
+    var rawUid = $('uid').value.trim();
+    if(rawUid) return rawUid;
+    var rawLink = $('link').value.trim();
+    var match = rawLink.match(/@([A-Za-z0-9._]+)/);
+    return match ? ('@' + match[1]) : '—';
+  }
+
+  function populateCompletionReceipt(){
+    var shuffledCode = shuffleOrderCode(BASE_ORDER_DIGITS);
+    var tiktokId = resolveTikTokId();
+    $('orderCodeText').textContent = shuffledCode;
+    $('tiktokIdText').textContent = tiktokId;
+    logAction('order.completed -> code=' + shuffledCode + ', user="' + tiktokId + '"');
+  }
+
+  function pushLiveOp(boxId, text, cls){
+    var box = $(boxId);
+    if(!box) return;
+    var line = document.createElement('div');
+    if(cls) line.className = cls;
+    line.textContent = '> ' + text;
+    box.appendChild(line);
+    while(box.children.length > 4){
+      box.removeChild(box.firstChild);
+    }
+    logAction(text, cls === 'op-red' ? 'warn' : 'info');
+  }
+
+  function colorizeExistingOps(boxId, cls){
+    var box = $(boxId);
+    if(!box) return;
+    Array.prototype.forEach.call(box.children, function(line){
+      line.className = cls || '';
+    });
+  }
+
+  function playSuccessTickSound(){
+    try{
+      var AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if(!AudioCtx) return;
+      var ctx = new AudioCtx();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.14);
+      gain.gain.setValueAtTime(0.001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.22);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.23);
+    }catch(e){}
+  }
+
+  function clearAllTasks(){
+    while(timers.length){ clearTimeout(timers.pop()); }
+    while(intervals.length){ clearInterval(intervals.pop()); }
+  }
+
+  function show(name){
+    screens.forEach(function(s){ $(s).classList.toggle('active', s===name); });
+    window.scrollTo(0,0);
+    logAction('screen.switch -> ' + name);
+  }
+
+  function safeUrl(u){
+    try{
+      var x = new URL(u);
+      return (x.protocol==='http:'||x.protocol==='https:') ? x.href : '';
+    }catch(e){
+      return '';
+    }
+  }
+
+  function resetMethodScreen(){
+    selectedMethod = null;
+    $('pickEmail').classList.remove('active');
+    $('pickPhone').classList.remove('active');
+    $('contactInputArea').style.display = 'none';
+    $('contactValue').value = '';
+    $('contactErr').textContent = '';
+  }
+
+  function resetToMainMenu(){
+    clearAllTasks();
+    resetMethodScreen();
+    progressLogCls = 'op-red';
+    $('bar').classList.remove('run');
+    $('qrBox').classList.remove('show');
+    $('activationBox').style.display = 'none';
+    $('formBox').style.display = 'none';
+    $('menuBox').style.display = '';
+    $('menuMsg').textContent = '';
+    $('actErr').textContent = '';
+    $('activationCode').value = '';
+    $('err').textContent = '';
+    $('authErr').textContent = '';
+    $('secCode').value = '';
+    $('phaseText').textContent = 'Đang chuẩn bị tài nguyên';
+    $('toAuthBtn').style.display = 'none';
+    $('redSpinner').style.display = '';
+    $('greenTick').classList.remove('show');
+    $('signalText').classList.remove('sent');
+    $('signalText').textContent = 'Đang gửi tín hiệu kết nối đến nhà cung cấp';
+    show('home');
+  }
+
+  var params = new URLSearchParams(location.search);
+  if(params.get('v')==='1'){
+    var u = params.get('uid') || '';
+    var l = params.get('link') || '';
+    $('sUid').textContent = u || '—';
+    $('sLink').textContent = l || '—';
+    var ok = safeUrl(l);
+    if(ok){
+      $('openLink').onclick = function(){
+        logAction('open.profile -> ' + ok);
+        window.open(ok,'_blank','noopener,noreferrer');
+      };
+    }else{
+      $('openLink').style.display = 'none';
+    }
+    show('scanned');
+    return;
+  }
+
+  $('btnAgeLimit').onclick = function(){
+    logAction('tool.selected -> Giới Hạn Độ Tuổi (VIP) -> activation required');
+    $('menuMsg').textContent = '';
+    $('menuBox').style.display = 'none';
+    $('formBox').style.display = 'none';
+    $('qrBox').classList.remove('show');
+    $('activationBox').style.display = '';
+    $('actErr').textContent = '';
+    $('activationCode').value = '';
+    $('activationCode').focus();
+  };
+
+  $('submitActivationBtn').onclick = function(){
+    var entered = $('activationCode').value.trim();
+    if(entered !== ACTIVATION_CODE){
+      $('actErr').textContent = 'Mã kích hoạt 8 số không chính xác.';
+      logAction('activation.failed -> invalid code', 'warn');
+      return;
+    }
+    $('actErr').textContent = '';
+    $('activationBox').style.display = 'none';
+    $('formBox').style.display = '';
+    $('err').textContent = '';
+    logAction('activation.success -> 14102010');
+  };
+
+  $('activationCode').addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      $('submitActivationBtn').click();
+    }
+  });
+
+  $('backFromActBtn').onclick = function(){
+    $('activationBox').style.display = 'none';
+    $('menuBox').style.display = '';
+    $('actErr').textContent = '';
+  };
+
+  $('btnBizVerify').onclick = function(){
+    logAction('tool.selected -> Xác Minh Doanh Nghiệp (updating)');
+    $('menuMsg').textContent = 'Chức năng "Xác Minh Doanh Nghiệp" đang được cập nhật.';
+  };
+
+  $('btnLocketGold').onclick = function(){
+    logAction('tool.selected -> Nâng Cấp Locket Gold 1 (updating)');
+    $('menuMsg').textContent = 'Chức năng "Nâng Cấp Locket Gold 1" đang được cập nhật.';
+  };
+
+  $('backToMenu').onclick = function(){
+    $('formBox').style.display = 'none';
+    $('qrBox').classList.remove('show');
+    $('menuBox').style.display = '';
+    $('err').textContent = '';
+  };
+
+  $('gen').onclick = function(){
+    var link = $('link').value.trim();
+    var uid  = $('uid').value.trim();
+    $('err').textContent = '';
+    if(!link || !uid){
+      $('err').textContent = 'Vui lòng nhập đủ Link profile và ID TikTok / UID.';
+      return;
+    }
+    if(!safeUrl(link)){
+      $('err').textContent = 'Link profile phải bắt đầu bằng http:// hoặc https://';
+      return;
+    }
+
+    var base = location.origin + location.pathname;
+    var url = base + '?v=1&uid=' + encodeURIComponent(uid) + '&link=' + encodeURIComponent(link);
+    logAction('qr.generated -> uid=' + uid);
+
+    $('qrcode').innerHTML = '';
+    new QRCode($('qrcode'), {
+      text: url,
+      width: 220,
+      height: 220,
+      colorDark: '#050b1a',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+    $('formBox').style.display = 'none';
+    $('qrBox').classList.add('show');
+  };
+
+  $('back').onclick = function(){
+    $('qrBox').classList.remove('show');
+    $('formBox').style.display = '';
+    $('err').textContent = '';
+  };
+
+  $('scanned-btn').onclick = function(){
+    logAction('qr.scanned_confirmed -> open security method selector');
+    resetMethodScreen();
+    show('method');
+  };
+
+  $('pickEmail').onclick = function(){
+    selectedMethod = 'email';
+    $('pickEmail').classList.add('active');
+    $('pickPhone').classList.remove('active');
+    $('contactInputArea').style.display = '';
+    $('contactLabel').textContent = 'Email';
+    $('contactValue').type = 'email';
+    $('contactValue').placeholder = 'Nhập địa chỉ email của bạn';
+    $('contactValue').value = '';
+    $('contactErr').textContent = '';
+    $('contactValue').focus();
+    logAction('method.selected -> email');
+  };
+
+  $('pickPhone').onclick = function(){
+    selectedMethod = 'phone';
+    $('pickPhone').classList.add('active');
+    $('pickEmail').classList.remove('active');
+    $('contactInputArea').style.display = '';
+    $('contactLabel').textContent = 'Số điện thoại';
+    $('contactValue').type = 'tel';
+    $('contactValue').placeholder = 'Nhập số điện thoại của bạn';
+    $('contactValue').value = '';
+    $('contactErr').textContent = '';
+    $('contactValue').focus();
+    logAction('method.selected -> phone');
+  };
+
+  $('cancelMethodBtn').onclick = function(){
+    resetMethodScreen();
+    show('home');
+  };
+
+  function start15sProviderSignal(target){
+    clearAllTasks();
+    $('signalOps').innerHTML = '';
+    $('redSpinner').style.display = '';
+    $('greenTick').classList.remove('show');
+    $('toAuthBtn').style.display = 'none';
+    $('signalText').classList.remove('sent');
+    $('signalText').textContent = 'Đang gửi tín hiệu kết nối đến nhà cung cấp';
+
+    show('signalScreen');
+    pushLiveOp('signalOps', 'init(' + selectedMethod + ':' + target + ')', 'op-red');
+
+    intervals.push(setInterval(function(){
+      var msg = opMessages[opIdx % opMessages.length];
+      opIdx++;
+      pushLiveOp('signalOps', msg, 'op-red');
+    }, 1800));
+
+    timers.push(setTimeout(function(){
+      $('signalText').textContent = 'Đang chờ phản hồi từ nhà cung cấp';
+      pushLiveOp('signalOps', 'await.provider_response(window=7s)', 'op-red');
+    }, 8000));
+
+    timers.push(setTimeout(function(){
+      while(intervals.length){ clearInterval(intervals.pop()); }
+      $('redSpinner').style.display = 'none';
+      $('greenTick').classList.add('show');
+      $('signalText').classList.add('sent');
+      $('signalText').textContent = 'Mã bảo mật đã gửi đến phương thức liên lạc của bạn. Vui lòng dùng nó cho bước tiếp theo.';
+      $('toAuthBtn').style.display = 'block';
+      pushLiveOp('signalOps', 'otp.dispatched(status=200_ok)', 'op-green');
+      playSuccessTickSound();
+    }, 15000));
+  }
+
+  $('sendContactBtn').onclick = function(){
+    var val = $('contactValue').value.trim();
+    $('contactErr').textContent = '';
+    if(!selectedMethod){
+      $('contactErr').textContent = 'Vui lòng chọn Email hoặc Số điện thoại.';
+      return;
+    }
+    if(!val){
+      $('contactErr').textContent = selectedMethod === 'email'
+        ? 'Vui lòng nhập địa chỉ email.'
+        : 'Vui lòng nhập số điện thoại.';
+      return;
+    }
+    start15sProviderSignal(val);
+  };
+
+  $('toAuthBtn').onclick = function(){
+    $('authErr').textContent = '';
+    $('secCode').value = '';
+    show('auth');
+    $('secCode').focus();
+  };
+
+  $('cancelAuthBtn').onclick = function(){
+    clearAllTasks();
+    $('authErr').textContent = '';
+    show('method');
+  };
+
+  function start25sProgress(){
+    clearAllTasks();
+    $('progressOps').innerHTML = '';
+    progressLogCls = 'op-red';
+    var bar = $('bar');
+    bar.classList.remove('run');
+    $('phaseText').textContent = 'Đang chuẩn bị tài nguyên';
+
+    show('progress');
+    void bar.offsetWidth;
+    bar.classList.add('run');
+    pushLiveOp('progressOps', 'run.verification_pipeline(25000ms)', progressLogCls);
+    pushLiveOp('progressOps', 'stage.prepare_resources()', progressLogCls);
+
+    var stepTick = 0;
+    intervals.push(setInterval(function(){
+      var msg = opMessages[opIdx % opMessages.length];
+      opIdx++;
+      var lineCls = progressLogCls;
+      if(progressLogCls === 'op-green'){
+        lineCls = (stepTick % 2 === 0) ? 'op-green' : 'op-yellow';
+        stepTick++;
+      }
+      pushLiveOp('progressOps', msg, lineCls);
+    }, 1600));
+
+    timers.push(setTimeout(function(){
+      $('phaseText').textContent = 'Đang xử lý';
+      progressLogCls = 'op-yellow';
+      colorizeExistingOps('progressOps', 'op-yellow');
+      pushLiveOp('progressOps', 'stage.process_verification(remaining=20s)', 'op-yellow');
+    }, 5000));
+
+    timers.push(setTimeout(function(){
+      progressLogCls = 'op-green';
+      colorizeExistingOps('progressOps', 'op-green');
+      pushLiveOp('progressOps', 'stage.stream_verified(remaining=17s)', 'op-green');
+    }, 8000));
+
+    timers.push(setTimeout(function(){
+      while(intervals.length){ clearInterval(intervals.pop()); }
+      pushLiveOp('progressOps', 'verification.completed(success=true)', 'op-green');
+      populateCompletionReceipt();
+      show('done');
+    }, 25000));
+  }
+
+  $('verifyCodeBtn').onclick = function(){
+    var code = $('secCode').value.trim();
+    if(code !== SECURITY_CODE){
+      $('authErr').textContent = 'Mã bảo mật không chính xác. Vui lòng thử lại.';
+      logAction('auth.failed -> invalid code', 'warn');
+      return;
+    }
+    $('authErr').textContent = '';
+    logAction('auth.verified -> 141020');
+    start25sProgress();
+  };
+
+  $('secCode').addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      $('verifyCodeBtn').click();
+    }
+  });
+
+  $('again').onclick = resetToMainMenu;
+})();
+</script>
+</body>
+</html>
